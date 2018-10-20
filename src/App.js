@@ -1,27 +1,200 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Welcome from './components/Welcome'
+import Board from './components/Board'
 import './App.css';
 
 class App extends Component {
+    state = {
+        columns: 10,
+        rows: 10,
+        gameStart: false,
+        player: 1,
+        obstacles: [],
+        steps: 0,
+        path: [],
+        showPath: false,
+        maxMoves: 100
+    }
+
+    handleChange = this.handleChange.bind(this);
+    handleSubmit = this.handleSubmit.bind(this);
+    createObstacles = this.createObstacles.bind(this);
+    movePlayer = this.movePlayer.bind(this);
+    followPath = this.followPath.bind(this);
+    clearState = this.clearState.bind(this);
+    pathToggle = this.pathToggle.bind(this);
+    handleOnScreenNav = this.handleOnScreenNav.bind(this);
+
+    // Start game, send columns and rows to css and set player position
+    handleSubmit(e){
+        e.preventDefault();
+        const {columns, rows } = this.state;
+        // should randomize this
+        let playerPosition = ((columns * rows) / 2) % 2 === 0 ? ((columns * rows) / 2) - columns/2 : Math.ceil((columns * rows) / 2 );
+        document.documentElement.style.setProperty("--columns", columns);
+        document.documentElement.style.setProperty("--rows", rows);
+        this.setState({ gameStart: true, player: playerPosition }, () =>{
+            this.createObstacles();
+        });
+    }
+
+    handleChange(e){
+        const target = e.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        })
+    }
+
+    movePlayer(e){
+        this.followPath();
+        if(this.state.obstacles.includes(this.state.player)){
+            this.removeObstacles(this.state.player);
+        }
+        if(e.keyCode === 39){
+            // right
+            if(this.state.player+1 <= this.state.columns * this.state.rows && this.state.player % this.state.columns !== 0  ){
+                this.setState({player: this.state.player + 1, steps: this.state.steps + 1 })
+            } else this.setState({player: this.state.player})
+        } else if(e.keyCode === 37){
+            //left
+            if(this.state.player-1 > 0 && this.state.player % this.state.columns !== 1){
+                this.setState({ player: this.state.player - 1, steps: this.state.steps + 1 })
+            } else this.setState({player: this.state.player})
+        } else if(e.keyCode === 38){
+            // up
+            if(this.state.player - this.state.columns > 0){
+                this.setState({player: this.state.player - this.state.columns, steps: this.state.steps + 1 })
+            } else this.setState({ player: this.state.player })
+        } else if(e.keyCode === 40){
+            //down
+            if(this.state.player + Number(this.state.columns) <= this.state.columns * this.state.rows){
+                this.setState({player: this.state.player + Number(this.state.columns), steps: this.state.steps + 1 })
+            } else this.setState({player: this.state.player })
+        }
+    }
+
+    removeObstacles(obstacles){
+        let array = [...this.state.obstacles];
+        let index = array.indexOf(obstacles);
+        array.splice(index,1);
+        this.setState({ obstacles: array }, () => {
+            if(this.state.obstacles.length === 0 ) {
+                alert(`Game finished: You took ${this.state.steps - 1 } steps`)
+                this.clearState()
+            }
+        })
+    }
+
+    createObstacles(){
+        const {columns, rows, player } = this.state;
+        let array = [];
+        let index = 0;
+        for(let i = 0; i < columns; i++){
+            for(let j = 0; j < rows; j++){
+                index++
+                if(Math.ceil(Math.random()*10) === 5) {
+                    if(index !== player) array.push(index);
+                }
+            }
+        }
+
+        this.setState({ obstacles: array })
+    }
+
+    followPath(){
+        const {player} = this.state;
+        let array = this.state.path;
+        array.push(player)
+        this.setState({path : array})
+    }
+
+    pathToggle(){
+        let notShowPath = !this.state.showPath
+        this.setState({
+            showPath: notShowPath
+        })
+    }
+
+    clearState(){
+        this.setState({
+            columns: 10,
+            rows: 10,
+            gameStart: false,
+            player: 1,
+            obstacles: [],
+            steps: 0,
+            path: [],
+            showPath: false
+        })
+    }
+
+    handleOnScreenNav(e){
+        const target = e.target;
+        const value = target.value;
+        this.followPath();
+        if(this.state.obstacles.includes(this.state.player)){
+            this.removeObstacles(this.state.player);
+        }
+        if(value === 'Right'){
+            // right
+            if(this.state.player+1 <= this.state.columns * this.state.rows && this.state.player % this.state.columns !== 0  ){
+                this.setState({player: this.state.player + 1, steps: this.state.steps + 1 })
+            } else this.setState({player: this.state.player})
+        } else if(value === 'Left'){
+            //left
+            if(this.state.player-1 > 0 && this.state.player % this.state.columns !== 1){
+                this.setState({ player: this.state.player - 1, steps: this.state.steps + 1 })
+            } else this.setState({player: this.state.player})
+        } else if(value === 'Up'){
+            // up
+            if(this.state.player - this.state.columns > 0){
+                this.setState({player: this.state.player - this.state.columns, steps: this.state.steps + 1 })
+            } else this.setState({ player: this.state.player })
+        } else if(value === 'Down'){
+            //down
+            if(this.state.player + Number(this.state.columns) <= this.state.columns * this.state.rows){
+                this.setState({player: this.state.player + Number(this.state.columns), steps: this.state.steps + 1 })
+            } else this.setState({player: this.state.player })
+        }
+    }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+      return (
+          <Router>
+              <div className="App">
+                  <Route
+                      exact path="/"
+                      render={() => (
+                          !this.state.gameStart ? (
+                              <Welcome
+                                  columns={this.state.columns}
+                                  rows={this.state.rows}
+                                  handleSubmit={this.handleSubmit}
+                                  handleChange={this.handleChange} />
+                          ) : (
+                              <Board
+                                  movePlayer={this.movePlayer}
+                                  columns={this.state.columns}
+                                  rows={this.state.rows}
+                                  player={this.state.player}
+                                  steps={this.state.steps}
+                                  obstacles={this.state.obstacles}
+                                    path = {this.state.path}
+                                clearState = {this.clearState}
+                                showPath = {this.state.showPath}
+                              pathToggle = {this.pathToggle}
+                              handleOnScreenNav = {this.handleOnScreenNav}/>
+                          )
+                      )
+                      }
+                  />
+              </div>
+          </Router>
+      );
   }
 }
 
