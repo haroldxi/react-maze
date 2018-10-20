@@ -1,3 +1,39 @@
+# React Maze Game
+This is a maze game created in react
+
+The purpose of the game is to collect all of the blue squares in the least amount of steps
+There will be a prompt on the first page requiring the dimensions of the game board. The values have to be between 7 and 20
+Once the maze is loaded, the player can use either the arrow keys or the buttons on the screen to navigate the player
+When all of the squares have been collected, a success message will be printed and the map will reset itself.
+
+There is also a reset map button where the whole map is erased and the player can start again
+There is also a path toggle button where the user can see where the player has been
+
+## Install Node
+On Mac and Linux:
+Download and install yarn from the following link:
+
+https://nodejs.org/en/download/
+
+
+
+### Running locally
+1. Download or clone the repository and run
+
+```
+npm install
+```
+
+2. Run the application
+
+```
+npm start
+```
+in the root repository of the project. This will start the server at http://localhost:3000
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
