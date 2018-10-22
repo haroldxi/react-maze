@@ -29,8 +29,9 @@ class App extends Component {
     handleSubmit(e){
         e.preventDefault();
         const {columns, rows } = this.state;
-        // should randomize this
-        let playerPosition = ((columns * rows) / 2) % 2 === 0 ? ((columns * rows) / 2) - columns/2 : Math.ceil((columns * rows) / 2 );
+        // should randomize this (used to start in the middle fo the map)
+        //let playerPosition = ((columns * rows) / 2) % 2 === 0 ? ((columns * rows) / 2) - columns/2 : Math.ceil((columns * rows) / 2 );
+        let playerPosition = Math.floor(Math.random()*(columns)*(rows))
         document.documentElement.style.setProperty("--columns", columns);
         document.documentElement.style.setProperty("--rows", rows);
         this.setState({ gameStart: true, player: playerPosition }, () =>{
