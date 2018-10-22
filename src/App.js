@@ -24,7 +24,6 @@ class App extends Component {
     followPath = this.followPath.bind(this);
     clearState = this.clearState.bind(this);
     pathToggle = this.pathToggle.bind(this);
-    handleOnScreenNav = this.handleOnScreenNav.bind(this);
 
     // Start game, send columns and rows to css and set player position
     handleSubmit(e){
@@ -50,26 +49,32 @@ class App extends Component {
     }
 
     movePlayer(e){
+        const target = e.target;
+        const value = target.value;
         this.followPath();
+        if(this.state.steps === this.state.maxMoves){
+            alert(`Game finished: Out of Moves.`)
+            this.clearState()
+        }
         if(this.state.obstacles.includes(this.state.player)){
             this.removeObstacles(this.state.player);
         }
-        if(e.keyCode === 39){
+        if(e.keyCode === 39 || value === 'Right'){
             // right
             if(this.state.player+1 <= this.state.columns * this.state.rows && this.state.player % this.state.columns !== 0  ){
                 this.setState({player: this.state.player + 1, steps: this.state.steps + 1 })
             } else this.setState({player: this.state.player})
-        } else if(e.keyCode === 37){
+        } else if(e.keyCode === 37 || value === 'Left'){
             //left
             if(this.state.player-1 > 0 && this.state.player % this.state.columns !== 1){
                 this.setState({ player: this.state.player - 1, steps: this.state.steps + 1 })
             } else this.setState({player: this.state.player})
-        } else if(e.keyCode === 38){
+        } else if(e.keyCode === 38 || value === 'Up'){
             // up
             if(this.state.player - this.state.columns > 0){
                 this.setState({player: this.state.player - this.state.columns, steps: this.state.steps + 1 })
             } else this.setState({ player: this.state.player })
-        } else if(e.keyCode === 40){
+        } else if(e.keyCode === 40 || value === 'Down'){
             //down
             if(this.state.player + Number(this.state.columns) <= this.state.columns * this.state.rows){
                 this.setState({player: this.state.player + Number(this.state.columns), steps: this.state.steps + 1 })
@@ -82,8 +87,8 @@ class App extends Component {
         let index = array.indexOf(obstacles);
         array.splice(index,1);
         this.setState({ obstacles: array }, () => {
-            if(this.state.obstacles.length === 0 ) {
-                alert(`Game finished: You took ${this.state.steps - 1 } steps`)
+             if(this.state.obstacles.length === 0 ) {
+                alert(`Game finished: You Won! You took ${this.state.steps - 1 } steps`)
                 this.clearState()
             }
         })
@@ -128,38 +133,9 @@ class App extends Component {
             obstacles: [],
             steps: 0,
             path: [],
-            showPath: false
+            showPath: false,
+            maxMoves: 100
         })
-    }
-
-    handleOnScreenNav(e){
-        const target = e.target;
-        const value = target.value;
-        this.followPath();
-        if(this.state.obstacles.includes(this.state.player)){
-            this.removeObstacles(this.state.player);
-        }
-        if(value === 'Right'){
-            // right
-            if(this.state.player+1 <= this.state.columns * this.state.rows && this.state.player % this.state.columns !== 0  ){
-                this.setState({player: this.state.player + 1, steps: this.state.steps + 1 })
-            } else this.setState({player: this.state.player})
-        } else if(value === 'Left'){
-            //left
-            if(this.state.player-1 > 0 && this.state.player % this.state.columns !== 1){
-                this.setState({ player: this.state.player - 1, steps: this.state.steps + 1 })
-            } else this.setState({player: this.state.player})
-        } else if(value === 'Up'){
-            // up
-            if(this.state.player - this.state.columns > 0){
-                this.setState({player: this.state.player - this.state.columns, steps: this.state.steps + 1 })
-            } else this.setState({ player: this.state.player })
-        } else if(value === 'Down'){
-            //down
-            if(this.state.player + Number(this.state.columns) <= this.state.columns * this.state.rows){
-                this.setState({player: this.state.player + Number(this.state.columns), steps: this.state.steps + 1 })
-            } else this.setState({player: this.state.player })
-        }
     }
 
   render() {
@@ -187,7 +163,7 @@ class App extends Component {
                                 clearState = {this.clearState}
                                 showPath = {this.state.showPath}
                               pathToggle = {this.pathToggle}
-                              handleOnScreenNav = {this.handleOnScreenNav}/>
+                              maxMoves = {this.state.maxMoves}/>
                           )
                       )
                       }

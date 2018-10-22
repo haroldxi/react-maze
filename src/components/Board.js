@@ -20,12 +20,13 @@ class Board extends React.Component {
                     steps={this.props.steps}
                     obstacles={this.props.obstacles}
                     path = {this.props.path}
-                    showPath = {this.props.showPath}/>
+                    showPath = {this.props.showPath}
+                    maxMoves = {this.props.maxMoves}/>
                 <Button.Group>
                 <Reset clearState={this.props.clearState}/>
                 <PathToggle pathToggle = {this.props.pathToggle} showPath = {this.props.showPath}/>
                     </Button.Group>
-                <OnScreenNav movePlayer = {this.props.handleOnScreenNav} />
+                <OnScreenNav movePlayer = {this.props.movePlayer} />
             </div>
         )
     }

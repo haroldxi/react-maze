@@ -14,7 +14,6 @@ class Game extends React.Component{
         for(let i = 0; i < this.props.columns; i++){
             for(let j = 0; j < this.props.rows; j++){
                 index++
-
                     board.push(<Cell key={index}
                                        counter={index}
                                        player={this.props.player}
@@ -32,7 +31,9 @@ class Game extends React.Component{
         return(
             <div className="gameBoard">
                 {this.createBoard()}
-                <p>Steps: {this.props.steps}</p>
+                <p>Moves Made: {this.props.steps}</p>
+                <p></p>
+                <p>Moves Remaining: {this.props.maxMoves - this.props.steps}</p>
             </div>
         )
     }
